@@ -1,5 +1,6 @@
-// Library to manipulate text waves
-
+#ifndef WriterString
+#define WriterString
+#include ":writer.wave"
 
 // Functions for Strings
 Function/WAVE partition(s,expr)
@@ -42,3 +43,5 @@ Function/S trim(s)
 	String s
 	return ReplaceString(" ",s,"")
 End
+
+#endif

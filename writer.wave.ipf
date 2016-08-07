@@ -1,4 +1,5 @@
-// Library to manipulate text waves
+#ifndef WriterWave
+#define WriterWave
 
 // Basic Functions
 Function length(w)
@@ -75,3 +76,4 @@ Function/WAVE return(s)
 	Make/FREE/T w={s}; return w
 End
 
+#endif
