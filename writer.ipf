@@ -76,6 +76,8 @@ Function/WAVE return(s)
 End
 
 // Functions for Strings
+
+// Partition is a function like ruby's partition method.
 Function/WAVE partition(s,expr)
 	String s,expr
 	if(!GrepString(s,expr))
