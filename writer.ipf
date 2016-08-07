@@ -97,7 +97,6 @@ Function/WAVE partition(s,expr)
 		expr = "(.*?)("+expr+")"
 	endif
 	String head,body,tail
-	print s,">>",expr
 	SplitString/E=expr s,head,body
 	tail=s[strlen(head+body),inf]
 	return cons(head,cons(body,cons(tail,void())))
