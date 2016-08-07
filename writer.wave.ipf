@@ -1,7 +1,5 @@
-#ifndef WriterWave
-#define WriterWave
+// haskell-like wave function
 
-// Basic Functions
 Function length(w)
 	WAVE/T w
 	return DimSize(w,0) > 0

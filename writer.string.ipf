@@ -1,12 +1,9 @@
-#ifndef WriterString
-#define WriterString
-#include ":writer.wave"
+// ruby-like string function
 
-// Functions for Strings
 Function/WAVE partition(s,expr)
 	String s,expr
 	if(!GrepString(s,expr))
-		return cons(s,cons("",cons("",void())))
+		Make/FREE/T w={s,"",""}; return w
 	endif
 	expr=IncreaseSubpatternNumber(2,expr)
 	String pre,pst
@@ -24,10 +21,9 @@ Function/WAVE partition(s,expr)
 		expr = "(.*?)("+expr+")"
 	endif
 	String head,body,tail
-	print s,">>",expr
 	SplitString/E=expr s,head,body
 	tail=s[strlen(head+body),inf]
-	return cons(head,cons(body,cons(tail,void())))
+	Make/FREE/T w={head,body,tail}; return f
 End
 static Function/S IncreaseSubpatternNumber(n,s)
 	Variable n; String s
@@ -43,5 +39,3 @@ Function/S trim(s)
 	String s
 	return ReplaceString(" ",s,"")
 End
-
-#endif
