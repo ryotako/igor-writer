@@ -73,5 +73,3 @@ Function/WAVE return(s)
 	String s
 	Make/FREE/T w={s}; return w
 End
-
-#endif
