@@ -1,21 +1,20 @@
-// ruby-like string function
+// ruby-like string functions
 
 Function/WAVE partition(s,expr)
 	String s,expr
-	if(!GrepString(s,expr))
-		Make/FREE/T w={s,"",""}; return w
-	endif
 	expr=IncreaseSubpatternNumber(2,expr)
 	String pre,pst
 	if(GrepString(expr,"^\\^")) // ^...(...) -> ^(...)(...)
-		SplitString/E=trim("^\\^ (\\\\|\\(|[^\\(\\]|\\[^\\(])* (\\(.*)") expr,pre,pst
-		if(strlen(pre))
-			expr = "^("+pre+")("+pst+")"
-		else
+		SplitString/E="^\\^((\\\\\\\\|\\\\\\(|[^\\(\\\\]|\\\\[^\\(])*)(.*)" expr,pre,pst,pst
+		if(strlen(pre)==0)
 			expr = "^()("+pst+")"
+		elseif(strlen(pst)==0)
+			expr = "^()("+pre+")"		
+		else
+			expr = "^("+pre+")("+pst+")"
 		endif
 	elseif(GrepString(expr,"^\\(+\\^")) // ((^...)) -> ^(.*)((...))
-		SplitString/E=trim("^ (\\(+) \\^ (.*)") expr,pre,pst
+		SplitString/E="^(\\(+)\\^(.*)" expr,pre,pst
 		expr = "^(.*?)"+"("+pre+pst+")"
 	else
 		expr = "(.*?)("+expr+")"
@@ -23,7 +22,12 @@ Function/WAVE partition(s,expr)
 	String head,body,tail
 	SplitString/E=expr s,head,body
 	tail=s[strlen(head+body),inf]
-	Make/FREE/T w={head,body,tail}; return f
+	if(!strlen(body))
+		Make/FREE/T w={s,"",""}
+	else
+		Make/FREE/T w={head,body,tail}
+	endif
+	return w
 End
 static Function/S IncreaseSubpatternNumber(n,s)
 	Variable n; String s
@@ -35,7 +39,3 @@ static Function/S IncreaseSubpatternNumber(n,s)
 	return head+"(?"+Num2Str(Str2Num(body)+n)+")"+IncreaseSubpatternNumber(n,tail)
 End
 
-Function/S trim(s)
-	String s
-	return ReplaceString(" ",s,"")
-End
