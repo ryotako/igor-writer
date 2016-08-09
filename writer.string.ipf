@@ -1,4 +1,4 @@
-// ruby-like string functions
+// ruby-like string function
 
 Function/WAVE partition(s,expr)
 	String s,expr
@@ -38,4 +38,3 @@ static Function/S IncreaseSubpatternNumber(n,s)
 	endif
 	return head+"(?"+Num2Str(Str2Num(body)+n)+")"+IncreaseSubpatternNumber(n,tail)
 End
-
