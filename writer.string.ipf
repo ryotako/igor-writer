@@ -4,15 +4,8 @@ Function/WAVE partition(s,expr)
 	String s,expr
 	expr=IncreaseSubpatternNumber(2,expr)
 	String pre,pst
-	if(GrepString(expr,"^\\^")) // ^...(...) -> ^(...)(...)
-		SplitString/E="^\\^((\\\\\\\\|\\\\\\(|[^\\(\\\\]|\\\\[^\\(])*)(.*)" expr,pre,pst,pst
-		if(strlen(pre)==0)
-			expr = "^()("+pst+")"
-		elseif(strlen(pst)==0)
-			expr = "^()("+pre+")"		
-		else
-			expr = "^("+pre+")("+pst+")"
-		endif
+	if(GrepString(expr,"^\\^")) // ^...(...) -> ^()...(...)
+		expr="^()("+expr[1,inf]+")"
 	elseif(GrepString(expr,"^\\(+\\^")) // ((^...)) -> ^(.*)((...))
 		SplitString/E="^(\\(+)\\^(.*)" expr,pre,pst
 		expr = "^(.*?)"+"("+pre+pst+")"
