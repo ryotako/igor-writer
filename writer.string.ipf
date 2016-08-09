@@ -1,5 +1,6 @@
 // ruby-like string function
 
+// Ruby: s.partition(/expr/)
 Function/WAVE partition(s,expr)
 	String s,expr
 	expr=IncreaseSubpatternNumber(2,expr)
@@ -30,4 +31,46 @@ static Function/S IncreaseSubpatternNumber(n,s)
 		return s
 	endif
 	return head+"(?"+Num2Str(Str2Num(body)+n)+")"+IncreaseSubpatternNumber(n,tail)
+End
+
+// Ruby: s.scan(/expr/)
+Function/WAVE scan(s,expr)
+	String s,expr
+	WAVE/T w=SubPatterns( s, "("+IncreaseSubpatternNumber(1,expr)+")")
+	Variable num=DimSize(w,0)
+	if(num>1)
+		DeletePoints 0,1,w
+	endif
+	if(DimSize(w,0)==0 || GrepString(expr,"^\\(*\\^") || GrepString(expr,"\\)*\\$$"))
+		return w
+	else
+		WAVE/T part=partition(s,expr)
+		if(num>1)
+			Concatenate/T {scan(part[2],expr)},w
+		else
+			Concatenate/T/NP {scan(part[2],expr)},w			
+		endif
+		return w
+	endif
+End
+
+static Function/WAVE SubPatterns(s,expr)
+	String s,expr
+	DFREF here=GetDataFolderDFR(); SetDataFolder NewFreeDataFolder()
+	String s_   =ReplaceString("\"",ReplaceString("\\",s   ,"\\\\"),"\\\"")
+	String expr_=ReplaceString("\"",ReplaceString("\\",expr,"\\\\"),"\\\"")
+	String cmd; sprintf cmd,"SplitString/E=\"%s\" \"%s\"", expr_, s_
+	SplitString/E=expr s
+	Make/FREE/T/N=(V_Flag) w; Variable i, N=V_Flag
+	for(i=0;i<N;i+=1)
+		Execute/Z "String/G s"+Num2Str(i)
+		sprintf cmd,"%s,s%d",cmd,i
+	endfor
+	Execute/Z cmd
+	for(i=0;i<N;i+=1)
+		SVAR sv=$"s"+Num2Str(i)
+		w[i]=sv
+	endfor
+	SetDataFolder here
+	return w
 End
