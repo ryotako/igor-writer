@@ -17,13 +17,18 @@ static Function eq_texts_(w1,w2)
 		return pass()
 	elseif(!WaveExists(w1) && !WaveExists(w2))
 		return fail()
-	elseif(DimSize(w1,0) !=DimSize(w2,0))
+	elseif(!DimEq(w1,w2,0) || !DimEq(w1,w2,1) || !DimEq(w1,w2,2) || !DimEq(w1,w2,3) )
 		return fail()
 	else
-		Make/FREE/N=(DimSize(w1,0)) w=cmpstr(w1,w2,1)
+		Make/FREE/N=(DimSize(w1,0),DimSize(w1,1),DimSize(w1,2),DimSize(w1,3)) w=cmpstr(w1,w2,1)
 		return WaveMax(w)==0 ? pass() : fail()
 	endif
 End
+static Function DimEq(w1,w2,dim)
+	WAVE/T w1,w2; Variable dim
+	return DimSize(w1,dim) == DimSize(w2,dim)
+End
+
 
 static Function pass()
 End
@@ -35,10 +40,14 @@ static Function fail()
 	String win  = StringFromList(1,info,",")
 	String line = StringFromList(2,info,",")
 	String msg,jmp
-	sprintf msg,">> \"%s\" failed in line %s, procedure \"%s\"",fun,line,win
-	win = win+SelectString(strlen(WinList(win,";","WIN:128")),".ipf","")		
-	msg += " >> "+TargetLineStr(win,Str2Num(line))
-	sprintf jmp,"\tDisplayProcedure/W=$\"%s\"/L=%s",win,line
+	if(strlen(fun))
+		sprintf msg,">> \"%s\" failed in line %s, procedure \"%s\"",fun,line,win
+		win = win+SelectString(strlen(WinList(win,";","WIN:128")),".ipf","")		
+		msg += " >> "+TargetLineStr(win,Str2Num(line))
+		sprintf jmp,"\tDisplayProcedure/W=$\"%s\"/L=%s",win,line
+	else
+		sprintf msg,">> failed in unknowon location"; jmp=""
+	endif
 	print msg
 	print jmp
 End
