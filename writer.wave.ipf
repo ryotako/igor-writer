@@ -2,7 +2,8 @@
 
 Function length(w)
 	WAVE/T w
-	return DimSize(w,0) > 0
+	Variable len=DimSize(w,0)
+	return NumType(len) ? 0 : len
 End
 Function null(w)
 	WAVE/T w
