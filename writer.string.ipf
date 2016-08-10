@@ -38,7 +38,7 @@ Function/WAVE scan(s,expr)
 	String s,expr
 	WAVE/T w=SubPatterns( s, "("+IncreaseSubpatternNumber(1,expr)+")")
 	Variable num=DimSize(w,0)
-	if(num>1)
+	if(num>1 || strlen(expr)==0)
 		DeletePoints 0,1,w
 	endif
 	if(DimSize(w,0)==0 || GrepString(expr,"^\\(*\\^") || GrepString(expr,"\\)*\\$$"))
@@ -47,8 +47,11 @@ Function/WAVE scan(s,expr)
 		WAVE/T part=partition(s,expr)
 		if(num>1)
 			Concatenate/T {scan(part[2],expr)},w
+			if(DimSize(w,1)==0)
+				Make/FREE/T/N=(DimSize(w,0),1) f=w; WAVE/T w=f
+			endif
 		else
-			Concatenate/T/NP {scan(part[2],expr)},w			
+			Concatenate/T/NP {scan(part[2],expr)},w
 		endif
 		return w
 	endif
