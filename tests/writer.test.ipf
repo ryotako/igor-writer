@@ -12,7 +12,7 @@ Function eq_text_with_list(w1,list)
 End
 
 Function eq_strs(s1,s2)
-	WAVE/T s1,s2
+	String s1,s2
 	return eq_texts_({s1},{s2})
 End
 
