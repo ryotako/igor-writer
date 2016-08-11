@@ -3,19 +3,19 @@ Library to manipulate text waves
 
 ### writer.string
 Ruby-like functions for regular expression 
- - sub(String s, String expr, String alt)
- - gsub(String s, String expr, String alt)
- - split(String s, String expr)
- - scan(String s, String expr)
- - partition(String s, String expr)
+ - sub(s, expr, alt)
+ - gsub(s, expr, alt)
+ - split(s, expr)
+ - scan(s, expr)
+ - partition(s, expr)
 
 ### writer.wave
 Haskell-like functions for text waves
- - length(Wave/T w), null(Wave/T w)
- - head(Wave/T w), tail(Wave/T w)
+ - length(w), null(w)
+ - head(w), tail(w)
  - void()
- - cons(String s, Wave/T w), concat(Wave/T w1, Wave/T w2)
- - map(FuncRef id f, Wave/T w)
- - bind(Wave/T w, FuncRef return f), return(String s) 
+ - cons(s,w), concat(w1,w2)
+ - map(f, w)
+ - bind(w, f), return(s)
 
  
