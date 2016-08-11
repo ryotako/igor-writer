@@ -23,15 +23,6 @@ Function/WAVE partition(s,expr)
 	endif
 	return w
 End
-static Function/S IncreaseSubpatternNumber(n,s)
-	Variable n; String s
-	String head,body,tail
-	SplitString/E="(.*?)(\\(\\?(\\d+\\)))(.*)" s,head,body,body,tail
-	if(empty(body))
-		return s
-	endif
-	return head+"(?"+Num2Str(Str2Num(body)+n)+")"+IncreaseSubpatternNumber(n,tail)
-End
 
 // Ruby: s.scan(/expr/)
 Function/WAVE scan(s,expr)
@@ -55,27 +46,6 @@ Function/WAVE scan(s,expr)
 		endif
 		return w
 	endif
-End
-
-static Function/WAVE SubPatterns(s,expr)
-	String s,expr
-	DFREF here=GetDataFolderDFR(); SetDataFolder NewFreeDataFolder()
-	String s_   =ReplaceString("\"",ReplaceString("\\",s   ,"\\\\"),"\\\"")
-	String expr_=ReplaceString("\"",ReplaceString("\\",expr,"\\\\"),"\\\"")
-	String cmd; sprintf cmd,"SplitString/E=\"%s\" \"%s\"", expr_, s_
-	SplitString/E=expr s
-	Make/FREE/T/N=(V_Flag) w; Variable i, N=V_Flag
-	for(i=0;i<N;i+=1)
-		Execute/Z "String/G s"+Num2Str(i)
-		sprintf cmd,"%s,s%d",cmd,i
-	endfor
-	Execute/Z cmd
-	for(i=0;i<N;i+=1)
-		SVAR sv=$"s"+Num2Str(i)
-		w[i]=sv
-	endfor
-	SetDataFolder here
-	return w
 End
 
 // Ruby: s.split(/expr/)
@@ -135,4 +105,35 @@ End
 static Function hasCaret(expr)
 	String expr
 	return GrepString(expr,"^\\(*\\^")
+End
+
+static Function/S IncreaseSubpatternNumber(n,s)
+	Variable n; String s
+	String head,body,tail
+	SplitString/E="(.*?)(\\(\\?(\\d+\\)))(.*)" s,head,body,body,tail
+	if(empty(body))
+		return s
+	endif
+	return head+"(?"+Num2Str(Str2Num(body)+n)+")"+IncreaseSubpatternNumber(n,tail)
+End
+
+static Function/WAVE SubPatterns(s,expr)
+	String s,expr
+	DFREF here=GetDataFolderDFR(); SetDataFolder NewFreeDataFolder()
+	String s_   =ReplaceString("\"",ReplaceString("\\",s   ,"\\\\"),"\\\"")
+	String expr_=ReplaceString("\"",ReplaceString("\\",expr,"\\\\"),"\\\"")
+	String cmd; sprintf cmd,"SplitString/E=\"%s\" \"%s\"", expr_, s_
+	SplitString/E=expr s
+	Make/FREE/T/N=(V_Flag) w; Variable i, N=V_Flag
+	for(i=0;i<N;i+=1)
+		Execute/Z "String/G s"+Num2Str(i)
+		sprintf cmd,"%s,s%d",cmd,i
+	endfor
+	Execute/Z cmd
+	for(i=0;i<N;i+=1)
+		SVAR sv=$"s"+Num2Str(i)
+		w[i]=sv
+	endfor
+	SetDataFolder here
+	return w
 End
