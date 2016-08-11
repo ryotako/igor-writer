@@ -3,8 +3,7 @@ Library to manipulate text waves
 
 ### writer.string
 Ruby-like functions for regular expression 
- - sub(s, expr, alt)
- - gsub(s, expr, alt)
+ - sub(s, expr, alt), gsub(s, expr, alt)
  - split(s, expr)
  - scan(s, expr)
  - partition(s, expr)
