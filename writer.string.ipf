@@ -97,6 +97,18 @@ Function/S sub(s,expr,alt)
 	return w[0]+alt+w[2]
 End
 
+// Ruby: s.gsub(/expr/,"alt")
+Function/S gsub(s,expr,alt)
+	String s,expr,alt
+	WAVE/T w=partition(s,expr)
+	if(empty(w[1]))
+		return s
+	elseif(hasCaret(expr) || hasDollar(expr))
+		return sub(s,expr,alt)
+	else
+		return sub(w[0]+w[1],expr,alt)+gsub(w[2],expr,alt)	
+	endif	
+End
 
 static Function empty(s)
 	String s
@@ -105,6 +117,10 @@ End
 static Function hasCaret(expr)
 	String expr
 	return GrepString(expr,"^\\(*\\^")
+End
+static Function hasDollar(expr)
+	String expr
+	return GrepString(expr,"\\$\\)*$")
 End
 
 static Function/S IncreaseSubpatternNumber(n,s)
