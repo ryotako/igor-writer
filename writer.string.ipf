@@ -98,6 +98,36 @@ Function/WAVE split(s,expr)
 	return buf
 End
 
+// Ruby: s.sub(/expr/,"alt")
+Function/S sub(s,expr,alt)
+	String s,expr,alt
+	WAVE/T w=partition(s,expr)
+	if(empty(w[1]))
+		return s
+	endif
+	WAVE/T a=split(alt,"(\\\\\\d|\\\\&|\\\\`|\\\\'|\\\\+)")
+	Variable i,N=DimSize(a,0); alt=""
+	for(i=0;i<N;i+=1)
+		if(GrepString(a[i],"\\\\0|\\\\&"))
+			alt+=w[1]
+		elseif(GrepString(a[i],"\\\\`"))
+			alt+=w[0]
+		elseif(GrepString(a[i],"\\\\'"))
+			alt+=w[2]
+		elseif(GrepString(a[i],"\\\\\\d"))
+			Variable num=Str2Num((a[i])[1])
+			WAVE/T sub=SubPatterns(w[1],expr)
+			if(DimSize(sub,0)+1>num)
+				alt+=sub[num]
+			endif
+		else
+			alt+=a[i]
+		endif
+	endfor
+	return w[0]+alt+w[2]
+End
+
+
 static Function empty(s)
 	String s
 	return !strlen(s)
