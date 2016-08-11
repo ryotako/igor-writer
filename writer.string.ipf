@@ -27,7 +27,7 @@ static Function/S IncreaseSubpatternNumber(n,s)
 	Variable n; String s
 	String head,body,tail
 	SplitString/E="(.*?)(\\(\\?(\\d+\\)))(.*)" s,head,body,body,tail
-	if(strlen(body)<1)
+	if(empty(body))
 		return s
 	endif
 	return head+"(?"+Num2Str(Str2Num(body)+n)+")"+IncreaseSubpatternNumber(n,tail)
@@ -41,7 +41,7 @@ Function/WAVE scan(s,expr)
 	if(num>1 || strlen(expr)==0)
 		DeletePoints 0,1,w
 	endif
-	if(DimSize(w,0)==0 || GrepString(expr,"^\\(*\\^") || GrepString(expr,"\\)*\\$$"))
+	if(DimSize(w,0)==0 || hasCaret(expr) )
 		return w
 	else
 		WAVE/T part=partition(s,expr)
@@ -81,19 +81,28 @@ End
 // Ruby: s.split(/expr/)
 Function/WAVE split(s,expr)
 	String s,expr
-	if(strlen(expr)==0 && strlen(s))
+	if(empty(expr) && strlen(s))
 		Make/FREE/T/N=(strlen(s)) w=s[p]; return w
 	endif
 	WAVE/T w = partition(s,expr)
-	if(strlen(w[1])==0)
+	if(empty(w[1]))
 		Make/FREE/T w={s}; return w
 	endif
 	Make/FREE/T buf={w[0]}
-	if(GrepString(expr,"^\\(*\\^"))
+	if(hasCaret(expr))
 		Concatenate/NP/T {SubPatterns(s,expr)},buf
 		InsertPoints DimSize(buf,0),1,buf; buf[inf]=w[2]	
 	else
 		Concatenate/NP/T {SubPatterns(s,expr) ,split(w[2],expr) },buf
 	endif
 	return buf
+End
+
+static Function empty(s)
+	String s
+	return !strlen(s)
+End
+static Function hasCaret(expr)
+	String expr
+	return GrepString(expr,"^\\(*\\^")
 End
