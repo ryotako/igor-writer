@@ -81,20 +81,19 @@ End
 // Ruby: s.split(/expr/)
 Function/WAVE split(s,expr)
 	String s,expr
+	if(strlen(expr)==0 && strlen(s))
+		Make/FREE/T/N=(strlen(s)) w=s[p]; return w
+	endif
 	WAVE/T w = partition(s,expr)
 	if(strlen(w[1])==0)
 		Make/FREE/T w={s}; return w
 	endif
-	if(strlen(w[0]))
-		Make/FREE/T buf={w[0]}
-	else
-		Make/FREE/T/N=0 buf	
-	endif
+	Make/FREE/T buf={w[0]}
 	if(GrepString(expr,"^\\(*\\^"))
 		Concatenate/NP/T {SubPatterns(s,expr)},buf
-		InsertPoints DimSize(buf,0),1,buf; buf[inf]=w[2]		
+		InsertPoints DimSize(buf,0),1,buf; buf[inf]=w[2]	
 	else
 		Concatenate/NP/T {SubPatterns(s,expr) ,split(w[2],expr) },buf
-		return buf
 	endif
+	return buf
 End

@@ -36,5 +36,16 @@ Function test_string()
 	eq_texts( scan("foobar","(.)" ) , {{"f"},{"o"},{"o"},{"b"},{"a"},{"r"}})
 	eq_texts( scan("foobarbazfoobarbaz","(ba)(.)" ) , {{"ba", "r"}, {"ba", "z"}, {"ba", "r"}, {"ba", "z"}})
 
+	// split
+	eq_texts( split("","") , {""})
+	eq_texts( split("hello,world,Igor",",") , {"hello","world","Igor"})
+	eq_texts( split("hello, world  , Igor","\\s*,\\s*") , {"hello","world","Igor"})
+	eq_texts( split("hello, world  ; Igor","\\s*(,|;)\\s*") , {"hello",",","world",";","Igor"})
+	eq_texts( split("hello","") , {"h","e","l","l","o"})
+
+	eq_texts( split("a,b,c","\\w.") , {"","","c"})
+	eq_texts( split("a,b,c","(\\w.)") , {"","a,","","b,","c"})
+	eq_texts( split("a,b,c","^(\\w.)") , {"","a,","b,c"})
+	
 	
 End
