@@ -82,7 +82,6 @@ End
 Function/WAVE split(s,expr)
 	String s,expr
 	WAVE/T w = partition(s,expr)
-	print w
 	if(strlen(w[1])==0)
 		Make/FREE/T w={s}; return w
 	endif
