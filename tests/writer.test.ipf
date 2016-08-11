@@ -11,6 +11,11 @@ Function eq_text_with_list(w1,list)
 	eq_texts_(w1,w2)
 End
 
+Function eq_strs(s1,s2)
+	WAVE/T s1,s2
+	return eq_texts_({s1},{s2})
+End
+
 static Function eq_texts_(w1,w2)
 	WAVE/T w1,w2
 	if(null(w1) && null(w2))
