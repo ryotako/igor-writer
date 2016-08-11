@@ -47,5 +47,19 @@ Function test_string()
 	eq_texts( split("a,b,c","(\\w.)") , {"","a,","","b,","c"})
 	eq_texts( split("a,b,c","^(\\w.)") , {"","a,","b,c"})
 	
-	
+	// sub
+	eq_strs( sub("","",""), "" )
+	eq_strs( sub("test","\\w","T"), "Test" )
+	eq_strs( sub("test","\\w","T"), "Test" )
+	eq_strs( sub("hello, world","\\w+","*\\&*"), "*hello*, world" )
+	eq_strs( sub("hello, world","\\w+","\\0\\'"), "hello, world, world" )
+
+	// gsub
+	eq_strs( gsub("","",""), "" )
+	eq_strs( gsub("hello,\\nworld\\r\\n","\\\\n|\\\\r\\\\n","<br />"), "hello,<br />world<br />" )
+	eq_strs( gsub("_Igor_ is _cool_.","_(.+?)_","<em>\\1</em>"), "<em>Igor</em> is <em>cool</em>." )
+	eq_strs( gsub("a,b,c","(?<=,).","_"), "a,_,_" )
+	eq_strs( gsub("a,b,c","(?=,)." ,"_"), "a_b_c" ) // This is a strange result, but compatible with Ruby. 
+
+
 End
