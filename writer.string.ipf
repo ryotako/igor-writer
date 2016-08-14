@@ -86,9 +86,9 @@ Function/S sub(s,expr,alt)
 			alt+=w[2]
 		elseif(GrepString(a[i],"\\\\\\d"))
 			Variable num=Str2Num((a[i])[1])
-			WAVE/T sub=SubPatterns(w[1],expr)
+			WAVE/T sub=SubPatterns(s,expr)
 			if(DimSize(sub,0)+1>num)
-				alt+=sub[num]
+				alt+=sub[num-1]
 			endif
 		else
 			alt+=a[i]
