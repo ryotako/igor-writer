@@ -37,10 +37,14 @@ Function/WAVE scan(s,expr)
 	else
 		WAVE/T part=partition(s,expr)
 		if(num>1)
-			Concatenate/T {scan(part[2],expr)},w
-			if(DimSize(w,1)==0)
-				Make/FREE/T/N=(DimSize(w,0),1) f=w; WAVE/T w=f
+			WAVE/T buf=scan(part[2],expr)
+			Variable Nw=DimSize(w,0), Nb=DimSize(buf,0)
+			if(Nb>0 && Nb>Nw)
+				InsertPoints Nw,Nb-Nw,w 
+			elseif(Nb>0)
+				InsertPoints Nb,Nw-Nb,buf 			
 			endif
+			Concatenate/T {buf},w
 		else
 			Concatenate/T/NP {scan(part[2],expr)},w
 		endif
