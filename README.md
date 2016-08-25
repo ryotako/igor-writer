@@ -1,9 +1,12 @@
 # igor-writer
-Library to manipulate text waves
+Library to manipulate text in Igor Pro
+
+Wiki(Japanese): https://github.com/ryotako/igor-writer/wiki
 
 ### writer.string
 Ruby-like functions for regular expression 
- - sub(s, expr, alt), gsub(s, expr, alt)
+ - gsub(s, expr, alt [proc])
+ - sub(s, expr, alt [proc])
  - split(s, expr)
  - scan(s, expr)
  - partition(s, expr)
