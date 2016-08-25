@@ -62,4 +62,16 @@ Function test_string()
 	eq_strs( gsub("a,b,c","(?=,)." ,"_"), "a_b_c" ) // This is a strange result, but compatible with Ruby. 
 
 
+	eq_strs( gsub("a,b,c","\\w","",proc=WT_sub), "_,_,_" )
+	eq_strs( gsub("Hello, World","\\w","",proc=WT_sub), "_____, _____" )
+	eq_strs( gsub("Hello, World","\\W","",proc=WT_sub), "Hello__World" )
+
 End
+
+Function/S WT_sub(s)
+	String s
+	if(strlen(s))
+		return "_"+WT_sub(s[1,inf])
+	endif
+	return ""
+End 
