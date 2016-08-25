@@ -1,6 +1,12 @@
 #pragma ModuleName=Writer
 // ruby-like string function
 
+override Function/S Writer_ProtoTypeSub(s)
+	String s
+	return s
+End
+
+
 // Ruby: s.partition(/expr/)
 static Function/WAVE partition(s,expr)
 	String s,expr
@@ -74,11 +80,15 @@ static Function/WAVE split(s,expr)
 End
 
 // Ruby: s.sub(/expr/,"alt")
-static Function/S sub(s,expr,alt)
-	String s,expr,alt
+//    or s.sub(/expr/){proc}
+static Function/S sub(s,expr,alt [proc])
+	String s,expr,alt; FUNCREF Writer_ProtoTypeSub proc
 	WAVE/T w=partition(s,expr)
 	if(empty(w[1]))
 		return s
+	endif
+	if(!ParamIsDefault(proc))
+		return w[0]+proc(w[1])+w[2]
 	endif
 	WAVE/T a=split(alt,"(\\\\\\d|\\\\&|\\\\`|\\\\'|\\\\+)")
 	Variable i,N=DimSize(a,0); alt=""
@@ -103,15 +113,23 @@ static Function/S sub(s,expr,alt)
 End
 
 // Ruby: s.gsub(/expr/,"alt")
-static Function/S gsub(s,expr,alt)
-	String s,expr,alt
+static Function/S gsub(s,expr,alt [proc])
+	String s,expr,alt; FUNCREF Writer_ProtoTypeSub proc
 	WAVE/T w=partition(s,expr)
 	if(empty(w[1]))
 		return s
 	elseif(hasCaret(expr) || hasDollar(expr))
-		return sub(s,expr,alt)
+		if(ParamIsDefault(proc))
+			return sub(s,expr,alt)
+		else
+			return sub(s,expr,alt,proc=proc)		
+		endif
 	else
-		return sub(w[0]+w[1],expr,alt)+gsub(w[2],expr,alt)	
+		if(ParamIsDefault(proc))
+			return sub(w[0]+w[1],expr,alt)+gsub(w[2],expr,alt)		
+		else
+			return sub(w[0]+w[1],expr,alt,proc=proc)+gsub(w[2],expr,alt,proc=proc)
+		endif
 	endif	
 End
 
