@@ -1,5 +1,16 @@
 // haskell-like wave function
 
+// Prototype Functions
+override Function/WAVE Writer_ProtoTypeReturn(s)
+	String s
+	Make/FREE/T w={s}; return w
+End
+override Function/S Writer_ProtoTypeId(s)
+	String s
+	return s
+End
+
+// Basic
 Function length(w)
 	WAVE/T w
 	Variable len=DimSize(w,0)
@@ -50,12 +61,8 @@ Function/WAVE concat(w1,w2)
 End
 
 // Transformation
-Function/S id(s)
-	String s
-	return s
-End
 Function/WAVE map(f,w)
-	FUNCREF id f; WAVE/T w
+	FUNCREF Writer_ProtoTypeId f; WAVE/T w
 	if(null(w))
 		return void()
 	endif
@@ -64,7 +71,7 @@ End
 
 // Lifting
 Function/WAVE bind(w,f)
-	WAVE/T w; FUNCREF return f
+	WAVE/T w; FUNCREF Writer_ProtoTypeReturn f
 	if(null(w))
 		return void()
 	endif
