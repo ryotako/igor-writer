@@ -1,4 +1,4 @@
-#include "::source:writer.string"
+#include "::writer"
 #include ":writer.test"
 
 Function test_string()
