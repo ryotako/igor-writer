@@ -179,24 +179,52 @@ End
 // haskell-like wave function
 
 // Prototype Functions
-override Function/WAVE Writer_ProtoTypeReturn(s)
-	String s
-	Make/FREE/T w={s}; return w
-End
 override Function/S Writer_ProtoTypeId(s)
 	String s
 	return s
 End
-
-// Basic
-static Function length(w)
-	WAVE/T w
-	Variable len=DimSize(w,0)
-	return NumType(len) ? 0 : len
+override Function/S Writer_ProtoTypeAdd(s1,s2)
+	String s1,s2
+	return s1+s2
 End
-static Function null(w)
+override Function/WAVE Writer_ProtoTypeSplit(s)
+	String s
+	Make/FREE/T/N=(ItemsInList(s)) w=StringFromList(p,s); return w
+End
+override Function Writer_ProtoTypeLength(s)
+	String s
+	return strlen(s)
+End
+
+// cast textwave into 1D textwave
+static Function/WAVE cast(w)
 	WAVE/T w
-	return !length(w)
+	if(WaveExists(w))
+		Make/FREE/T/N=(DimSize(w,0)) f=w
+	else
+		Make/FREE/T/N=0 f
+	endif
+	return f
+End
+
+////////////////////////////////////////
+// Basic ///////////////////////////////
+////////////////////////////////////////
+static Function/WAVE cons(s,w) // (:)
+	String s; WAVE/T w
+	if(null(w))
+		return cast({s})
+	endif
+	Duplicate/FREE/T cast(w),f
+	InsertPoints 0,1,f
+	f[0]=s
+	return f
+End
+static Function/WAVE extend(w1,w2) // (++)
+	WAVE/T w1,w2
+	Make/FREE/T/N=0 f
+	Concatenate/NP/T {cast(w1),cast(w2)},f
+	return f
 End
 
 static Function/S head(w)
@@ -209,53 +237,109 @@ End
 static Function/WAVE tail(w)
 	WAVE/T w
 	if(null(w))
-		return void()
+		return cast($"")
 	endif
-	Duplicate/FREE/T w,ww
-	DeletePoints 0,1,ww
-	return ww
+	WAVE/T f=cast(w)
+	DeletePoints 0,1,f
+	return f
 End
 
-static Function/WAVE void()
-	Make/FREE/T/N=0 w; return w
-End
-
-// Construction
-static Function/WAVE cons(s,w)
-	String s; WAVE/T w
+static Function/S last(w)
+	WAVE/T w
 	if(null(w))
-		return return(s)
+		return ""
 	endif
-	Duplicate/FREE/T w,ww; InsertPoints 0,1,ww; ww[0]=s; return ww
+	return w[inf]
 End
-static Function/WAVE concat(w1,w2)
-	WAVE/T w1,w2
-	if(null(w1) && null(w2))
-		return void()
-	elseif(null(w1))
-		return cons(head(w2),tail(w2))
+static Function/WAVE init(w)
+	WAVE/T w
+	if(null(w))
+		return cast($"")
 	endif
-	return cons(head(w1),concat(tail(w1),w2))
+	WAVE/T f=cast(w)
+	DeletePoints length(f)-1,1,f
+	return f	
 End
 
-// Transformation
+static Function length(w)
+	WAVE/T w
+	return numpnts(cast(w))
+End
+static Function null(w)
+	WAVE/T w
+	return !length(w)
+End
+
+////////////////////////////////////////
+// Construction ////////////////////////
+////////////////////////////////////////
+
 static Function/WAVE map(f,w)
 	FUNCREF Writer_ProtoTypeId f; WAVE/T w
 	if(null(w))
-		return void()
+		return cast($"")
 	endif
 	return cons(f(head(w)),map(f,tail(w)))
 End
 
-// Lifting
-static Function/WAVE bind(w,f)
-	WAVE/T w; FUNCREF Writer_ProtoTypeReturn f
+static Function/S foldl(f,s,w)
+	FUNCREF Writer_ProtoTypeAdd f; String s; WAVE/T w
 	if(null(w))
-		return void()
+		return s
 	endif
-	return concat(f(head(w)),bind(tail(w),f))
+	return foldl(f, f(s,head(w)), tail(w)) 
 End
-static Function/WAVE return(s)
-	String s
-	Make/FREE/T w={s}; return w
+static Function/S foldl1(f,w)
+	FUNCREF Writer_ProtoTypeAdd f; WAVE/T w
+	return foldl(f,head(w),tail(w))
+End
+
+static Function/S foldr(f,s,w)
+	FUNCREF Writer_ProtoTypeAdd f; String s; WAVE/T w
+	if(null(w))
+		return s
+	endif
+	return foldr(f, f(last(w),s), init(w)) 
+End
+static Function/S foldr1(f,w)
+	FUNCREF Writer_ProtoTypeAdd f; WAVE/T w
+	return foldl(f,last(w),init(w))
+End
+
+static Function/WAVE concatMap(f,w)
+	FUNCREF Writer_ProtoTypeSplit f; WAVE/T w
+	if(null(w))
+		return cast($"")
+	endif
+	return extend(f(head(w)),concatMap(f,tail(w)))
+End
+
+static Function any(f,w)
+	FUNCREF Writer_ProtoTypeLength f; WAVE/T w
+	if(null(w))
+		return 0
+	endif
+	return f(head(w)) || any(f,tail(w))
+End
+static Function all(f,w)
+	FUNCREF Writer_ProtoTypeLength f; WAVE/T w
+	if(null(w))
+		return 1
+	endif
+	return f(head(w)) && all(f,tail(w))
+End
+
+static Function/WAVE take(n,w)
+	Variable n; WAVE/T w
+	if(null(w) || n<1 || n!=n)
+		return cast($"")
+	endif
+	return cons(head(w),take(n-1,tail(w)))
+End
+static Function/WAVE drop(n,w)
+	Variable n; WAVE/T w
+	if(null(w) || n<1 || n!=n)
+		return cast(w)
+	endif
+	return drop(n-1,tail(w))
 End
