@@ -1,4 +1,4 @@
-#pragma ModuleName=Writer
+#pragma ModuleName=Wr
 // ruby-like string function
 
 override Function/S Writer_ProtoTypeSub(s)
