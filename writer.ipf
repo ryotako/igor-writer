@@ -1,3 +1,4 @@
+#pragma ModuleName=Writer
 // ruby-like string function
 
 override Function/S Writer_ProtoTypeSub(s)
@@ -7,7 +8,7 @@ End
 
 
 // Ruby: s.partition(/expr/)
-Function/WAVE partition(s,expr)
+static Function/WAVE partition(s,expr)
 	String s,expr
 	expr=IncreaseSubpatternNumber(2,expr)
 	String pre,pst
@@ -31,7 +32,7 @@ Function/WAVE partition(s,expr)
 End
 
 // Ruby: s.scan(/expr/)
-Function/WAVE scan(s,expr)
+static Function/WAVE scan(s,expr)
 	String s,expr
 	WAVE/T w=SubPatterns( s, "("+IncreaseSubpatternNumber(1,expr)+")")
 	Variable num=DimSize(w,0)
@@ -59,7 +60,7 @@ Function/WAVE scan(s,expr)
 End
 
 // Ruby: s.split(/expr/)
-Function/WAVE split(s,expr)
+static Function/WAVE split(s,expr)
 	String s,expr
 	if(empty(expr) && strlen(s))
 		Make/FREE/T/N=(strlen(s)) w=s[p]; return w
@@ -80,7 +81,7 @@ End
 
 // Ruby: s.sub(/expr/,"alt")
 //    or s.sub(/expr/){proc}
-Function/S sub(s,expr,alt [proc])
+static Function/S sub(s,expr,alt [proc])
 	String s,expr,alt; FUNCREF Writer_ProtoTypeSub proc
 	WAVE/T w=partition(s,expr)
 	if(empty(w[1]))
@@ -112,7 +113,7 @@ Function/S sub(s,expr,alt [proc])
 End
 
 // Ruby: s.gsub(/expr/,"alt")
-Function/S gsub(s,expr,alt [proc])
+static Function/S gsub(s,expr,alt [proc])
 	String s,expr,alt; FUNCREF Writer_ProtoTypeSub proc
 	WAVE/T w=partition(s,expr)
 	if(empty(w[1]))
@@ -209,7 +210,7 @@ End
 ////////////////////////////////////////
 // Basic ///////////////////////////////
 ////////////////////////////////////////
-Function/WAVE cons(s,w) // (:)
+static Function/WAVE cons(s,w) // (:)
 	String s; WAVE/T w
 	if(null(w))
 		return cast({s})
@@ -219,21 +220,21 @@ Function/WAVE cons(s,w) // (:)
 	f[0]=s
 	return f
 End
-Function/WAVE extend(w1,w2) // (++)
+static Function/WAVE extend(w1,w2) // (++)
 	WAVE/T w1,w2
 	Make/FREE/T/N=0 f
 	Concatenate/NP/T {cast(w1),cast(w2)},f
 	return f
 End
 
-Function/S head(w)
+static Function/S head(w)
 	WAVE/T w
 	if(null(w))
 		return ""
 	endif
 	return w[0]
 End
-Function/WAVE tail(w)
+static Function/WAVE tail(w)
 	WAVE/T w
 	if(null(w))
 		return cast($"")
@@ -243,14 +244,14 @@ Function/WAVE tail(w)
 	return f
 End
 
-Function/S last(w)
+static Function/S last(w)
 	WAVE/T w
 	if(null(w))
 		return ""
 	endif
 	return w[inf]
 End
-Function/WAVE init(w)
+static Function/WAVE init(w)
 	WAVE/T w
 	if(null(w))
 		return cast($"")
@@ -260,11 +261,11 @@ Function/WAVE init(w)
 	return f	
 End
 
-Function length(w)
+static Function length(w)
 	WAVE/T w
 	return numpnts(cast(w))
 End
-Function null(w)
+static Function null(w)
 	WAVE/T w
 	return !length(w)
 End
@@ -273,7 +274,7 @@ End
 // Construction ////////////////////////
 ////////////////////////////////////////
 
-Function/WAVE map(f,w)
+static Function/WAVE map(f,w)
 	FUNCREF Writer_ProtoTypeId f; WAVE/T w
 	if(null(w))
 		return cast($"")
@@ -281,31 +282,31 @@ Function/WAVE map(f,w)
 	return cons(f(head(w)),map(f,tail(w)))
 End
 
-Function/S foldl(f,s,w)
+static Function/S foldl(f,s,w)
 	FUNCREF Writer_ProtoTypeAdd f; String s; WAVE/T w
 	if(null(w))
 		return s
 	endif
 	return foldl(f, f(s,head(w)), tail(w)) 
 End
-Function/S foldl1(f,w)
+static Function/S foldl1(f,w)
 	FUNCREF Writer_ProtoTypeAdd f; WAVE/T w
 	return foldl(f,head(w),tail(w))
 End
 
-Function/S foldr(f,s,w)
+static Function/S foldr(f,s,w)
 	FUNCREF Writer_ProtoTypeAdd f; String s; WAVE/T w
 	if(null(w))
 		return s
 	endif
 	return foldr(f, f(last(w),s), init(w)) 
 End
-Function/S foldr1(f,w)
+static Function/S foldr1(f,w)
 	FUNCREF Writer_ProtoTypeAdd f; WAVE/T w
 	return foldl(f,last(w),init(w))
 End
 
-Function/WAVE concatMap(f,w)
+static Function/WAVE concatMap(f,w)
 	FUNCREF Writer_ProtoTypeSplit f; WAVE/T w
 	if(null(w))
 		return cast($"")
@@ -313,14 +314,14 @@ Function/WAVE concatMap(f,w)
 	return extend(f(head(w)),concatMap(f,tail(w)))
 End
 
-Function any(f,w)
+static Function any(f,w)
 	FUNCREF Writer_ProtoTypeLength f; WAVE/T w
 	if(null(w))
 		return 0
 	endif
 	return f(head(w)) || any(f,tail(w))
 End
-Function all(f,w)
+static Function all(f,w)
 	FUNCREF Writer_ProtoTypeLength f; WAVE/T w
 	if(null(w))
 		return 1
@@ -328,14 +329,14 @@ Function all(f,w)
 	return f(head(w)) && all(f,tail(w))
 End
 
-Function/WAVE take(n,w)
+static Function/WAVE take(n,w)
 	Variable n; WAVE/T w
 	if(null(w) || n<1 || n!=n)
 		return cast($"")
 	endif
 	return cons(head(w),take(n-1,tail(w)))
 End
-Function/WAVE drop(n,w)
+static Function/WAVE drop(n,w)
 	Variable n; WAVE/T w
 	if(null(w) || n<1 || n!=n)
 		return cast(w)
