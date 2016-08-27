@@ -13,11 +13,15 @@ Ruby-like functions for regular expression
 
 ### writer.wave
 Haskell-like functions for text waves
- - length(w), null(w)
+ - cons(s,w), extend(w1,w2)
  - head(w), tail(w)
- - void()
- - cons(s,w), concat(w1,w2)
- - map(f, w)
- - bind(w, f), return(s)
+ - last(w), init(w)
+ - length(w), null(w)
+ - map(f,w)
+ - foldl(f,s,w), foldl1(f,w)
+ - foldr(f,s,w), foldr1(f,w)
+ - concatMap(f,w)
+ - any(f,w), all(f,w)
+ - take(n,w), drop(n,w)
 
  
