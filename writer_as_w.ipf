@@ -1,5 +1,26 @@
-#pragma ModuleName=W
+//------------------------------------------------------------------------------
+// This procedure file is packaged by igmodule
+// Wed,28 Sep 2016
+//------------------------------------------------------------------------------
+#pragma ModuleName=w
+
+//------------------------------------------------------------------------------
+// original file: writer_main.ipf 
+//------------------------------------------------------------------------------
+#if !ItemsInList(WinList("writer_main.ipf",";",""))
+
+//#include ":writer_string"
+//#include ":writer_list"
+
+#endif
+
+//------------------------------------------------------------------------------
+// original file: writer_string.ipf 
+//------------------------------------------------------------------------------
+#if !ItemsInList(WinList("writer_string.ipf",";",""))
+
 // ruby-like string function
+//#pragma ModuleName=wString
 
 override Function/S Writer_ProtoTypeSub(s)
 	String s
@@ -176,7 +197,16 @@ static Function/WAVE SubPatterns(s,expr)
 	SetDataFolder here
 	return w
 End
+
+#endif
+
+//------------------------------------------------------------------------------
+// original file: writer_list.ipf 
+//------------------------------------------------------------------------------
+#if !ItemsInList(WinList("writer_list.ipf",";",""))
+
 // haskell-like wave function
+//#pragma ModuleName=wList
 
 // Prototype Functions
 override Function/S Writer_ProtoTypeId(s)
@@ -343,3 +373,6 @@ static Function/WAVE drop(n,w)
 	endif
 	return drop(n-1,tail(w))
 End
+
+#endif
+
