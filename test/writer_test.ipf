@@ -25,7 +25,7 @@ static Function eq_texts_(w1,w2)
 	elseif(!DimEq(w1,w2,0) || !DimEq(w1,w2,1) || !DimEq(w1,w2,2) || !DimEq(w1,w2,3) )
 		return fail()
 	else
-		Make/FREE/N=(DimSize(w1,0),DimSize(w1,1),DimSize(w1,2),DimSize(w1,3)) w=cmpstr(w1,w2,1)
+		Make/FREE/N=(DimSize(w1,0),DimSize(w1,1),DimSize(w1,2),DimSize(w1,3)) w=abs(cmpstr(w1,w2,1))
 		return WaveMax(w)==0 ? pass() : fail()
 	endif
 End

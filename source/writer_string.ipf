@@ -1,4 +1,5 @@
 // ruby-like string function
+#pragma ModuleName=wString
 
 override Function/S Writer_ProtoTypeSub(s)
 	String s
@@ -7,7 +8,7 @@ End
 
 
 // Ruby: s.partition(/expr/)
-Function/WAVE partition(s,expr)
+static Function/WAVE partition(s,expr)
 	String s,expr
 	expr=IncreaseSubpatternNumber(2,expr)
 	String pre,pst
@@ -31,7 +32,7 @@ Function/WAVE partition(s,expr)
 End
 
 // Ruby: s.scan(/expr/)
-Function/WAVE scan(s,expr)
+static Function/WAVE scan(s,expr)
 	String s,expr
 	WAVE/T w=SubPatterns( s, "("+IncreaseSubpatternNumber(1,expr)+")")
 	Variable num=DimSize(w,0)
@@ -59,7 +60,7 @@ Function/WAVE scan(s,expr)
 End
 
 // Ruby: s.split(/expr/)
-Function/WAVE split(s,expr)
+static Function/WAVE split(s,expr)
 	String s,expr
 	if(empty(expr) && strlen(s))
 		Make/FREE/T/N=(strlen(s)) w=s[p]; return w
@@ -80,7 +81,7 @@ End
 
 // Ruby: s.sub(/expr/,"alt")
 //    or s.sub(/expr/){proc}
-Function/S sub(s,expr,alt [proc])
+static Function/S sub(s,expr,alt [proc])
 	String s,expr,alt; FUNCREF Writer_ProtoTypeSub proc
 	WAVE/T w=partition(s,expr)
 	if(empty(w[1]))
@@ -112,7 +113,7 @@ Function/S sub(s,expr,alt [proc])
 End
 
 // Ruby: s.gsub(/expr/,"alt")
-Function/S gsub(s,expr,alt [proc])
+static Function/S gsub(s,expr,alt [proc])
 	String s,expr,alt; FUNCREF Writer_ProtoTypeSub proc
 	WAVE/T w=partition(s,expr)
 	if(empty(w[1]))
