@@ -161,12 +161,12 @@ static Function/WAVE SubPatterns(s,expr)
 	DFREF here=GetDataFolderDFR(); SetDataFolder NewFreeDataFolder()
 	String s_   =ReplaceString("\"",ReplaceString("\\",s   ,"\\\\"),"\\\"")
 	String expr_=ReplaceString("\"",ReplaceString("\\",expr,"\\\\"),"\\\"")
-	String cmd; sprintf cmd,"SplitString/E=\"%s\" \"%s\"", expr_, s_
+	String cmd="SplitString/E=\""+expr_+ "\" \""+s_+"\""
 	SplitString/E=expr s
 	Make/FREE/T/N=(V_Flag) w; Variable i, N=V_Flag
 	for(i=0;i<N;i+=1)
 		Execute/Z "String/G s"+Num2Str(i)
-		sprintf cmd,"%s,s%d",cmd,i
+		cmd+=",s"+Num2Str(i)
 	endfor
 	Execute/Z cmd
 	for(i=0;i<N;i+=1)
