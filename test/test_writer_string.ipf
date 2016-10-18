@@ -1,77 +1,70 @@
+#pragma ModuleName=TestWriterString
+#include "unit-testing"
 #include "::writer"
-#include ":writer_test"
 
-Function test_string()
-	
-	// writer#partition
-	// basic
-	eq_texts( writer#partition("test","")    , {"test","",""})
-	eq_texts( writer#partition("test","a")   , {"test","",""})
-	eq_texts( writer#partition("test","e")   , {"t","e","st"})
-	eq_texts( writer#partition("test","(e)") , {"t","e","st"})
-	eq_texts( writer#partition("test","(((e)))") , {"t","e","st"})
-	eq_texts( writer#partition("test","[a-f]") , {"t","e","st"})
-	eq_texts( writer#partition("test","(test|check)") , {"","test",""})
-	// anchar
-	eq_texts( writer#partition("test","^te") , {"","te","st"})
-	eq_texts( writer#partition("test","st$") , {"te","st",""})
-	eq_texts( writer#partition("test","^(t)"), {"","t","est"})
-	eq_texts( writer#partition("test","(t)$"), {"tes","t",""})
-	eq_texts( writer#partition("test","^t$")    , {"test","",""})
-	eq_texts( writer#partition("test","^test$") , {"","test",""})
-	// reference
-	eq_texts( writer#partition("This is a test.","s"), {"Thi","s"," is a test."})
-	eq_texts( writer#partition("This is a test.","(?<!Thi)s"), {"This i","s"," a test."})
-	eq_texts( writer#partition("This is a test.","(?<=e)s"  ), {"This is a te","s","t."})
-
-	// writer#scan
-	eq_texts( writer#scan("","") , $"")
-	eq_texts( writer#scan("","\\w") , $"")
-	eq_texts( writer#scan("of the people, by the people, for the people","\\w+") , {"of", "the", "people", "by", "the", "people", "for", "the", "people"})
-	eq_texts( writer#scan("of the people, by the people, for the people","people") , {"people","people","people"})
-	eq_texts( writer#scan("Hokkaido:Sapporo, Aomori:Aomori, Iwate:Morioka","(\\w+):(\\w+)") , { {"Hokkaido", "Sapporo"},{"Aomori", "Aomori"},{"Iwate", "Morioka"} })
-	eq_texts( writer#scan("foobar","..") , {"fo","ob","ar"})
-	eq_texts( writer#scan("foobar","o" ) , {"o","o"})
-	eq_texts( writer#scan("foobarbazfoobarbaz","ba." ) , {"bar", "baz", "bar", "baz"})
-	eq_texts( writer#scan("foobar","(.)" ) , {{"f"},{"o"},{"o"},{"b"},{"a"},{"r"}})
-	eq_texts( writer#scan("foobarbazfoobarbaz","(ba)(.)" ) , {{"ba", "r"}, {"ba", "z"}, {"ba", "r"}, {"ba", "z"}})
-
-	// writer#split
-	eq_texts( writer#split("","") , {""})
-	eq_texts( writer#split("hello,world,Igor",",") , {"hello","world","Igor"})
-	eq_texts( writer#split("hello, world  , Igor","\\s*,\\s*") , {"hello","world","Igor"})
-	eq_texts( writer#split("hello, world  ; Igor","\\s*(,|;)\\s*") , {"hello",",","world",";","Igor"})
-	eq_texts( writer#split("hello","") , {"h","e","l","l","o"})
-
-	eq_texts( writer#split("a,b,c","\\w.") , {"","","c"})
-	eq_texts( writer#split("a,b,c","(\\w.)") , {"","a,","","b,","c"})
-	eq_texts( writer#split("a,b,c","^(\\w.)") , {"","a,","b,c"})
-	
-	// writer#sub
-	eq_strs( writer#sub("","",""), "" )
-	eq_strs( writer#sub("test","\\w","T"), "Test" )
-	eq_strs( writer#sub("test","\\w","T"), "Test" )
-	eq_strs( writer#sub("hello, world","\\w+","*\\&*"), "*hello*, world" )
-	eq_strs( writer#sub("hello, world","\\w+","\\0\\'"), "hello, world, world" )
-
-	// writer#gsub
-	eq_strs( writer#gsub("","",""), "" )
-	eq_strs( writer#gsub("hello,\\nworld\\r\\n","\\\\n|\\\\r\\\\n","<br />"), "hello,<br />world<br />" )
-	eq_strs( writer#gsub("_Igor_ is _cool_.","_(.+?)_","<em>\\1</em>"), "<em>Igor</em> is <em>cool</em>." )
-	eq_strs( writer#gsub("a,b,c","(?<=,).","_"), "a,_,_" )
-	eq_strs( writer#gsub("a,b,c","(?=,)." ,"_"), "a_b_c" ) // This is a strange result, but compatible with Ruby. 
-
-
-	eq_strs( writer#gsub("a,b,c","\\w","",proc=WT_sub), "_,_,_" )
-	eq_strs( writer#gsub("Hello, World","\\w","",proc=WT_sub), "_____, _____" )
-	eq_strs( writer#gsub("Hello, World","\\W","",proc=WT_sub), "Hello__World" )
-
+static Function test_partition()
+	CHECK_EQUAL_TEXTWAVES( writer#partition("test","")    , {"test","",""})
+	CHECK_EQUAL_TEXTWAVES( writer#partition("test","a")   , {"test","",""})
+	CHECK_EQUAL_TEXTWAVES( writer#partition("test","e")   , {"t","e","st"})
+	CHECK_EQUAL_TEXTWAVES( writer#partition("test","(e)") , {"t","e","st"})
+	CHECK_EQUAL_TEXTWAVES( writer#partition("test","(((e)))") , {"t","e","st"})
+	CHECK_EQUAL_TEXTWAVES( writer#partition("test","[a-f]") , {"t","e","st"})
+	CHECK_EQUAL_TEXTWAVES( writer#partition("test","(test|check)") , {"","test",""})
+	CHECK_EQUAL_TEXTWAVES( writer#partition("test","^te") , {"","te","st"})
+	CHECK_EQUAL_TEXTWAVES( writer#partition("test","st$") , {"te","st",""})
+	CHECK_EQUAL_TEXTWAVES( writer#partition("test","^(t)"), {"","t","est"})
+	CHECK_EQUAL_TEXTWAVES( writer#partition("test","(t)$"), {"tes","t",""})
+	CHECK_EQUAL_TEXTWAVES( writer#partition("test","^t$")    , {"test","",""})
+	CHECK_EQUAL_TEXTWAVES( writer#partition("test","^test$") , {"","test",""})
+	CHECK_EQUAL_TEXTWAVES( writer#partition("This is a test.","s"), {"Thi","s"," is a test."})
+	CHECK_EQUAL_TEXTWAVES( writer#partition("This is a test.","(?<!Thi)s"), {"This i","s"," a test."})
+	CHECK_EQUAL_TEXTWAVES( writer#partition("This is a test.","(?<=e)s"  ), {"This is a te","s","t."})
 End
 
-Function/S WT_sub(s)
-	String s
-	if(strlen(s))
-		return "_"+WT_sub(s[1,inf])
-	endif
-	return ""
-End 
+static Function test_scan()
+	Make/FREE/T/N=0 NULL
+	CHECK_EQUAL_TEXTWAVES( writer#scan("","") , NULL)
+	CHECK_EQUAL_TEXTWAVES( writer#scan("","\\w") , NULL)
+	CHECK_EQUAL_TEXTWAVES( writer#scan("of the people, by the people, for the people","\\w+") , {"of", "the", "people", "by", "the", "people", "for", "the", "people"})
+	CHECK_EQUAL_TEXTWAVES( writer#scan("of the people, by the people, for the people","people") , {"people","people","people"})
+	CHECK_EQUAL_TEXTWAVES( writer#scan("Hokkaido:Sapporo, Aomori:Aomori, Iwate:Morioka","(\\w+):(\\w+)") , { {"Hokkaido", "Sapporo"},{"Aomori", "Aomori"},{"Iwate", "Morioka"} })
+	CHECK_EQUAL_TEXTWAVES( writer#scan("foobar","..") , {"fo","ob","ar"})
+	CHECK_EQUAL_TEXTWAVES( writer#scan("foobar","o" ) , {"o","o"})
+	CHECK_EQUAL_TEXTWAVES( writer#scan("foobarbazfoobarbaz","ba." ) , {"bar", "baz", "bar", "baz"})
+	CHECK_EQUAL_TEXTWAVES( writer#scan("foobar","(.)" ) , {{"f"},{"o"},{"o"},{"b"},{"a"},{"r"}})
+	CHECK_EQUAL_TEXTWAVES( writer#scan("foobarbazfoobarbaz","(ba)(.)" ) , {{"ba", "r"}, {"ba", "z"}, {"ba", "r"}, {"ba", "z"}})
+End
+
+static Function test_split()
+	CHECK_EQUAL_TEXTWAVES( writer#split("","") , {""})
+	CHECK_EQUAL_TEXTWAVES( writer#split("hello,world,Igor",",") , {"hello","world","Igor"})
+	CHECK_EQUAL_TEXTWAVES( writer#split("hello, world  , Igor","\\s*,\\s*") , {"hello","world","Igor"})
+	CHECK_EQUAL_TEXTWAVES( writer#split("hello, world  ; Igor","\\s*(,|;)\\s*") , {"hello",",","world",";","Igor"})
+	CHECK_EQUAL_TEXTWAVES( writer#split("hello","") , {"h","e","l","l","o"})
+
+	CHECK_EQUAL_TEXTWAVES( writer#split("a,b,c","\\w.") , {"","","c"})
+	CHECK_EQUAL_TEXTWAVES( writer#split("a,b,c","(\\w.)") , {"","a,","","b,","c"})
+	CHECK_EQUAL_TEXTWAVES( writer#split("a,b,c","^(\\w.)") , {"","a,","b,c"})
+End
+
+static Function test_sub()
+	CHECK_EQUAL_TEXTWAVES( {writer#sub("","","")}, {""} )
+	CHECK_EQUAL_TEXTWAVES( {writer#sub("test","\\w","T")}, {"Test"} )
+	CHECK_EQUAL_TEXTWAVES( {writer#sub("test","\\w","T")}, {"Test"} )
+	CHECK_EQUAL_TEXTWAVES( {writer#sub("hello, world","\\w+","*\\&*")}, {"*hello*, world"} )
+	CHECK_EQUAL_TEXTWAVES( {writer#sub("hello, world","\\w+","\\0\\'")}, {"hello, world, world"} )
+End
+
+static Function test_gsub()
+	CHECK_EQUAL_TEXTWAVES( {writer#gsub("","","")}, {""} )
+	CHECK_EQUAL_TEXTWAVES( {writer#gsub("hello,\\nworld\\r\\n","\\\\n|\\\\r\\\\n","<br />")}, {"hello,<br />world<br />"} )
+	CHECK_EQUAL_TEXTWAVES( {writer#gsub("_Igor_ is _cool_.","_(.+?)_","<em>\\1</em>")}, {"<em>Igor</em> is <em>cool</em>."} )
+	CHECK_EQUAL_TEXTWAVES( {writer#gsub("a,b,c","(?<=,).","_")}, {"a,_,_"} )
+	CHECK_EQUAL_TEXTWAVES( {writer#gsub("a,b,c","(?=,)." ,"_")}, {"a_b_c"} ) // This is a strange result, but compatible with Ruby. 
+
+	CHECK_EQUAL_TEXTWAVES( {writer#gsub("","","")}, {""} )
+	CHECK_EQUAL_TEXTWAVES( {writer#gsub("hello,\\nworld\\r\\n","\\\\n|\\\\r\\\\n","<br />")}, {"hello,<br />world<br />"} )
+	CHECK_EQUAL_TEXTWAVES( {writer#gsub("_Igor_ is _cool_.","_(.+?)_","<em>\\1</em>")}, {"<em>Igor</em> is <em>cool</em>."} )
+	CHECK_EQUAL_TEXTWAVES( {writer#gsub("a,b,c","(?<=,).","_")}, {"a,_,_"} )
+	CHECK_EQUAL_TEXTWAVES( {writer#gsub("a,b,c","(?=,)." ,"_")}, {"a_b_c"} ) // This is a strange result, but compatible with Ruby. 
+End
