@@ -19,7 +19,7 @@ override Function Writer_ProtoTypeLength(s)
 	return strlen(s)
 End
 
-// cast textwave into 1D textwave
+// cast a textwave into a 1D textwave
 static Function/WAVE cast(w)
 	WAVE/T w
 	if(WaveExists(w))
@@ -99,10 +99,9 @@ End
 
 static Function/WAVE map(f,w)
 	FUNCREF Writer_ProtoTypeId f; WAVE/T w
-	if(null(w))
-		return cast($"")
-	endif
-	return cons(f(head(w)),map(f,tail(w)))
+	WAVE/T buf=cast(w)
+	buf=f(w)
+	return buf
 End
 
 static Function/S foldl(f,s,w)
