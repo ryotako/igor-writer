@@ -133,7 +133,7 @@ static Function/WAVE concatMap(f,w)
 	Make/FREE/T/N=0 buf
 	Variable i,N = DimSize(w, 0)
 	for(i = 0; i < N; i += 1)
-			Concatenate/T {f(w[i])}, buf
+			Concatenate/T/NP {f(w[i])}, buf
 	endfor
 	return buf
 End
