@@ -307,7 +307,9 @@ End
 static Function/WAVE map(f,w)
 	FUNCREF Writer_ProtoTypeId f; WAVE/T w
 	WAVE/T buf=cast(w)
-	buf=f(w)
+	if(length(buf))
+		buf=f(w)
+	endif
 	return buf
 End
 
